@@ -1,7 +1,9 @@
-function [B,D,X,Y] = DCF(S, ST, IDX, IDXT, r, alpha, beta, option)
+function [B,D,X,Y] = DCF(maxS, minS, S, ST, IDX, IDXT, r, alpha, beta, option)
 %DCF: Dicrete Collaborative Filtering as
 
 %Input:
+%maxS: max rating score
+%minS: min rating score
 %S: user-item score matrix, [m,n] = size(S)
 %ST: transpose of ST, for efficient sparse matrix indexing in Matlab, i.e.,
 %matlab can only efficiently access sparse matrix by column.
@@ -31,8 +33,6 @@ function [B,D,X,Y] = DCF(S, ST, IDX, IDXT, r, alpha, beta, option)
 
 
 [m,n] = size(S);
-maxS = max(max(S));
-minS = min(min(S));
 converge = false;
 it = 1;
 
@@ -55,7 +55,7 @@ if Init
    if (isfield(option,'B0') &&  isfield(option,'D0') && isfield(option,'X0') && isfield(option,'Y0'))
        B0 = option.B0; D0 = option.D0; X0 = option.X0; Y0 = option.Y0;
    else
-       [U,V,X0,Y0] = DCFinit(S, ST, IDX, IDXT, r, alpha, beta, option);
+       [U,V,X0,Y0] = DCFinit(maxS,minS, S, ST, IDX, IDXT, r, alpha, beta, option);
        B0 = sign(U); B0(B0 == 0) = 1;
        D0 = sign(V); D0(D0 == 0) = 1;
    end
@@ -78,14 +78,15 @@ D = D0;
 X = X0;
 Y = Y0;
 if debug
-   [loss,obj] = DCFobj(maxS,minS,S,IDX,B,D,X,Y,alpha,beta);   
-   disp(loss);
-   disp(obj);
+   [loss,obj] = DCFobj(maxS,minS,S,IDX,B,D,X,Y,alpha,beta);
+   disp('Starting DCF...');
+   
+   disp(['loss value = ',num2str(loss)]);
+   disp(['obj value = ',num2str(obj)]);
 end
 
 
 while ~converge
-    tic;
     B0 = B;
     D0 = D;
     parfor i = 1:m
@@ -104,10 +105,11 @@ while ~converge
     end
     X = UpdateSVD(B);
     Y = UpdateSVD(D);
-    toc;
+
     if debug
         [loss,obj] = DCFobj(maxS,minS,S,IDX,B,D,X,Y,alpha,beta);
-        disp(obj);
+        disp(['loss value = ',num2str(loss)]);
+        disp(['obj value = ',num2str(obj)]);
     end
     disp(['DCF at bit ',int2str(r),' Iteration:',int2str(it)]);
 
