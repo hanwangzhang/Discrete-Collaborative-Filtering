@@ -1,5 +1,5 @@
 function [B,D,X,Y] = DCF(maxS, minS, S, ST, IDX, IDXT, r, alpha, beta, option)
-%DCF: Dicrete Collaborative Filtering as
+%DCF: Dicrete Collaborative Filtering described in Algorithm 1.
 
 %Input:
 %maxS: max rating score

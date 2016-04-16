@@ -1,5 +1,5 @@
 function [U,V,X,Y] = DCFinit(maxS, minS, S, ST, IDX, IDXT, r, alpha, beta, option)
-%DCFinit: Initialization for Dicrete Collaborative Filtering as in Eq.(22)
+%DCFinit: Initialization for Dicrete Collaborative Filtering as in Eq.(17)
 
 %Input:
 %maxS: max rating score

@@ -6,7 +6,9 @@ S(S>0.5) = 0;
 S = S*5;
 S = ceil(S);
 
-S = sparse(S);
+S = sparse(S);% S should be a sparse matrix in real case.
+%the following transpose is a trick to accelerate sparse matrix
+%indexing in Matlab.
 ST = S';
 IDX = (S~=0);
 IDXT = IDX';
